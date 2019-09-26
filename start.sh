@@ -16,8 +16,6 @@ if [ -z "$WORKSPACE" ] || [ "$WORKSPACE" != 'prod' ]; then
   WORKSPACE="dev"
 fi
 
-# Имя сети создаваемое докером
-export DOCKER_NETWORK_NAME="loli_network"
 # Docker юзер
 export DOCKER_USER="$UID:$GID"
 # Путь к файлам сервера
@@ -26,8 +24,6 @@ SERVER_PATH="$PWD/server"
 CLIENT_PATH="$PWD/client"
 # Путь к файлу манифеста composer
 COMPOSER_MANIFEST_PATH="$SERVER_PATH/www"
-
-docker network create $DOCKER_NETWORK_NAME
 
 if [ "$WORKSPACE" == 'dev' ]; then
   # Указываем путь к описанию сборки среды
@@ -52,11 +48,6 @@ sed -ri "s/server_name[^;]*;/server_name ${SERVER_NAME_SERVER};/" docker-images/
 
 # Прокидывание адреса сервера в конфиг клиента
 echo "export const API_ADDRESS = '${SERVER_NAME_SERVER}'" > client/src/config/apiAddress.js
-
-# Прокидывание данных в конфигурацию Sphix для доступа к базе данных
-sed -ri "s/name[^;]*/name: '${MYSQL_DATABASE}'/" server/www/phinx.yml
-sed -ri "s/user[^;]*/user: '${MYSQL_USER}'/" server/www/phinx.yml
-sed -ri "s/pass[^;]*/pass: '${MYSQL_PASSWORD}'/" server/www/phinx.yml
 
 # Сборка сервера, установка зависимостей в отдельном composer контейнере
 docker run --rm --interactive --tty \
