@@ -1,0 +1,6 @@
+.idea
+client/logs
+client/node_modules
+server/mysql
+server/logs
+server/www/vendor
