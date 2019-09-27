@@ -42,9 +42,9 @@ else
 fi
 
 # Прокидывание имени серверов в конфигурацию nginx
-sed -ri "s/server_name[^;]*;/server_name ${SERVER_NAME_CLIENT};/" docker-images/nginx/conf.d/client.conf
-sed -ri "s/server_name[^;]*;/server_name ${SERVER_NAME_CLIENT};/" docker-images/nginx/conf.d/client-proxy.conf
-sed -ri "s/server_name[^;]*;/server_name ${SERVER_NAME_SERVER};/" docker-images/nginx/conf.d/server.conf
+sed -ri "s/server_name[^;]*;/server_name ${SERVER_NAME_CLIENT};/" docker/nginx/client.conf
+sed -ri "s/server_name[^;]*;/server_name ${SERVER_NAME_CLIENT};/" docker/nginx/client-proxy.conf
+sed -ri "s/server_name[^;]*;/server_name ${SERVER_NAME_SERVER};/" docker/nginx/server.conf
 
 # Прокидывание адреса сервера в конфиг клиента
 echo "export const API_ADDRESS = '${SERVER_NAME_SERVER}'" > client/src/config/apiAddress.js
