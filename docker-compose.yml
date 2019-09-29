@@ -5,68 +5,68 @@ services:
     image: mysql:latest
     ports:
       - "3306:3306"
-    volumes:
-      - ./server/mysql:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     command: [
       '--default_authentication_plugin=mysql_native_password',
       '--character-set-server=utf8mb4',
       '--collation-server=utf8mb4_unicode_ci'
     ]
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - ./volumes/mysql:/var/lib/mysql
 
-  adminer:
-    container_name: "RandomWEBM_Adminer"
-    image: adminer
+  php:
     restart: always
-    ports:
-      - "8080:8080"
+    build: docker/php
     links:
       - mysql
+    env_file:
+      - .env
+    ports:
+      - 10000
+    volumes:
+      - ./app/server:/var/server
 
+  node:
+    restart: always
+    image: "node:10"
+    user: "$DOCKER_USER"
+    working_dir: /home/node/client
+    volumes:
+      - ./app/client:/home/node/client
+    environment:
+      NODE_ENV: "development"
+      SERVER_NAME_SERVER: ${SERVER_NAME_SERVER}
+      SERVER_NAME_CLIENT: ${SERVER_NAME_CLIENT}
+    ports:
+      - "8081:8081"
+    command: >
+      bash -c "npm install
+      && npm run serve"
   nginx:
-    container_name: "RandomWEBM_Nginx"
     restart: always
     image: nginx:latest
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./docker-images/nginx/server.conf:/etc/nginx/conf.d/server.conf
-      - ./docker-images/nginx/client-proxy.conf:/etc/nginx/conf.d/client.conf
-      - ./server/www:/var/server
-      - ./server/logs:/var/log/nginx/server
+      - ./docker/nginx/working:/etc/nginx/conf.d/
+      - ./app/server:/var/server
+      - ./volumes/server/logs:/var/log/nginx/server
+      - ./volumes/client/logs:/var/log/nginx/client
     links:
       - php
       - node
-  php:
-    container_name: "RandomWEBM_PHP-FPM"
+
+  adminer:
+    image: adminer
     restart: always
-    build: docker/php-dev
+    ports:
+      - "8080:8080"
     links:
       - mysql
-    volumes:
-      - ./server/www:/var/server
-    ports:
-      - 10000
-    env_file:
-      - .env
-
-  node:
-    restart: "on-failure"
-    container_name: "RandomWEBM_NodeJS"
-    image: "node:10"
-    user: "$DOCKER_USER"
-    working_dir: /home/node/client
     environment:
-      NODE_ENV: "development"
-    volumes:
-      - ./client:/home/node/client
-    ports:
-      - "8081:8081"
-    command: >
-      bash -c "npm install
-      && npm run serve"
+      ADMINER_DEFAULT_SERVER: mysql
