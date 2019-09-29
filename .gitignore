@@ -1,5 +1,6 @@
 .idea
-vulumes
+volumes
 app/client/node_modules
 app/client/.env.local
+docker/nginx/working/
 .env
