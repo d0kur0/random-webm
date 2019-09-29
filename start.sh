@@ -1,62 +1,39 @@
 #!/bin/bash
 
-# Проверка, установлен ли docker и docker-comoise
 if ! type "docker-compose" > /dev/null; then
   echo Docker-compose not installed.
   exit 1
 fi
 
-# Инжект переменных окружения
+if [ ! -f ".env" ]; then
+    echo ".env file does not exist"
+    exit 1
+fi
+
 source .env
 
-# Если есть аргумент при запуске - проверяем, равен ли он prod || dev, иначе ставим как dev
-# Если аргумента нет - так же dev
-WORKSPACE=$1
-if [ -z "$WORKSPACE" ] || [ "$WORKSPACE" != 'prod' ]; then
-  WORKSPACE="dev"
-fi
 
-# Docker юзер
 export DOCKER_USER="$UID:$GID"
-# Путь к файлам сервера
-SERVER_PATH="$PWD/server"
-# Путь к файлам клиента
-CLIENT_PATH="$PWD/client"
-# Путь к файлу манифеста composer
-COMPOSER_MANIFEST_PATH="$SERVER_PATH/www"
+export SERVER_PATH="$PWD/server"
+export CLIENT_PATH="$PWD/client"
+export NGINX_CONFIGS="./docker/nginx"
 
-if [ "$WORKSPACE" == 'dev' ]; then
-  # Указываем путь к описанию сборки среды
-  export COMPOSE_FILE=docker-compose.dev.yml
-else
-  # Указываем путь к описанию сборки среды
-  export COMPOSE_FILE=docker-compose.prod.yml
-  # В случае с prod, нужно собрать файлы клиента в nodeJS на стадии сборки docker
-  # В prod среде нет nodeJS.
-  docker run --rm --interactive --tty \
-    -u "${UID}:${GID}" \
-    -v "$CLIENT_PATH":/app \
-    -w "/app" \
-    node \
-    bash -c "npm install && npm run build"
+if [ ! -d "docker/nginx/working" ]; then
+  cp -r "$NGINX_CONFIGS/original" "$NGINX_CONFIGS/working"
 fi
 
-# Прокидывание имени серверов в конфигурацию nginx
-sed -ri "s/server_name[^;]*;/server_name ${SERVER_NAME_CLIENT};/" docker/nginx/client.conf
-sed -ri "s/server_name[^;]*;/server_name ${SERVER_NAME_CLIENT};/" docker/nginx/client-proxy.conf
-sed -ri "s/server_name[^;]*;/server_name ${SERVER_NAME_SERVER};/" docker/nginx/server.conf
+sed -ri "s/server_name[^;]*;/server_name ${SERVER_NAME_CLIENT};/" "$NGINX_CONFIGS/working/client.conf"
+sed -ri "s/server_name[^;]*;/server_name ${SERVER_NAME_SERVER};/" "$NGINX_CONFIGS/working/server.conf"
 
-# Прокидывание адреса сервера в конфиг клиента
-echo "export const API_ADDRESS = '${SERVER_NAME_SERVER}'" > client/src/config/apiAddress.js
+export VUE_ENV="app/client/.env.local"
 
-# Сборка сервера, установка зависимостей в отдельном composer контейнере
-docker run --rm --interactive --tty \
-  -u "${UID}:${GID}" \
-  -v "$COMPOSER_MANIFEST_PATH":/app \
-  composer install --ignore-platform-reqs
+if [ -f "$VUE_ENV" ]; then
+  rm "$VUE_ENV"
+fi
 
+echo "VUE_APP_SERVER_ADDRESS=$SERVER_NAME_SERVER" >> "$VUE_ENV"
+echo "VUE_APP_CLIENT_ADDRESS=$SERVER_NAME_CLIENT" >> "$VUE_ENV"
 
-# Запуск и сборка контейнеров
 docker-compose down
 docker-compose build
 docker-compose up

@@ -1,9 +1,8 @@
-version: '2'
+version: '3'
 
 services:
   mysql:
-    container_name: "MySQL"
-    image: mysql
+    image: mysql:latest
     ports:
       - "3306:3306"
     volumes:
@@ -20,7 +19,7 @@ services:
     ]
 
   adminer:
-    container_name: "Adminer"
+    container_name: "RandomWEBM_Adminer"
     image: adminer
     restart: always
     ports:
@@ -29,7 +28,7 @@ services:
       - mysql
 
   nginx:
-    container_name: "Nginx"
+    container_name: "RandomWEBM_Nginx"
     restart: always
     image: nginx:latest
     ports:
@@ -44,7 +43,7 @@ services:
       - php
       - node
   php:
-    container_name: "PHP-FPM"
+    container_name: "RandomWEBM_PHP-FPM"
     restart: always
     build: docker/php-dev
     links:
@@ -58,7 +57,7 @@ services:
 
   node:
     restart: "on-failure"
-    container_name: "NodeJS"
+    container_name: "RandomWEBM_NodeJS"
     image: "node:10"
     user: "$DOCKER_USER"
     working_dir: /home/node/client
