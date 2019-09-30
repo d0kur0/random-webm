@@ -39,6 +39,21 @@ RUN git clone https://github.com/jbboehr/php-psr.git \
     && make install \
     && echo "extension=$(find /usr/local/lib/php/extensions/ -name psr.so)" > /usr/local/etc/php/conf.d/psr.ini
 
+RUN git clone git://github.com/phalcon/php-zephir-parser.git \
+    && cd php-zephir-parser \
+    && phpize \
+    && ./configure \
+    && make \
+    && make install \
+    && echo "extension=$(find /usr/local/lib/php/extensions/ -name zephir_parser.so)" > /usr/local/etc/php/conf.d/zephir_parser.ini
+
+RUN git clone https://github.com/phalcon/cphalcon \
+    && cd cphalcon \
+    && wget "https://github.com/phalcon/zephir/releases/download/0.12.4/zephir.phar" \
+    && php zephir.phar fullclean \
+    && php zephir.phar build \
+    && echo "extension=$(find /usr/local/lib/php/extensions/ -name phalcon.so)" > /usr/local/etc/php/conf.d/phalcon.ini
+
 ADD php.ini /usr/local/etc/php/conf.d/40-custom.ini
 WORKDIR /var/server
 
