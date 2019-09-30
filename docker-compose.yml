@@ -42,7 +42,7 @@ services:
       SERVER_NAME_SERVER: ${SERVER_NAME_SERVER}
       SERVER_NAME_CLIENT: ${SERVER_NAME_CLIENT}
     ports:
-      - "8081:8081"
+      - "8089:8089"
     command: >
       bash -c "npm install
       && npm run serve"
