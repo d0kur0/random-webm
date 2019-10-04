@@ -6,6 +6,7 @@ ARG PHALCON_EXT_PATH=php7/64bits
 RUN apt-get update && apt-get install -y \
         apt-utils \
         wget \
+        cron \
         libfreetype6-dev \
         gcc \
         build-essential \
