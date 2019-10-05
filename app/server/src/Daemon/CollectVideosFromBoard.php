@@ -1,5 +1,5 @@
 <?php
-namespace Daemon;
+namespace App\Daemon;
 
 class CollectVideosFromBoard {
 
