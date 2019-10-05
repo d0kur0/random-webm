@@ -1,6 +1,6 @@
 <?php
 namespace Daemon;
 
-class collectBoards {
+class CollectBoards {
 
 }
