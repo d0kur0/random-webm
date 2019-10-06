@@ -1,6 +1,5 @@
 <?php
 require_once("../vendor/autoload.php");
-define('DOMAIN', '2ch.hk');
 
 try {
     $di = new DI\Container();
