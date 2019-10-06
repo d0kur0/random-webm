@@ -1,12 +1,13 @@
 <?php
-namespace App\Daemon;
-use \GuzzleHttp\Client as HttpClient,
-    \App\Daemon\TransportSettings;
+namespace App\Daemon\Transport;
 
-class Transport
+use \GuzzleHttp\Client as HttpClient,
+    \App\Daemon\Transport\TransportSettings;
+
+abstract class Transport
 {
-    private $httpClient;
-    private $transportSettings;
+    protected $httpClient;
+    protected $transportSettings;
 
     public function __construct (TransportSettings $transportSettings, HttpClient $httpClient)
     {
@@ -14,14 +15,7 @@ class Transport
         $this->transportSettings = $transportSettings;
     }
 
-    public function getBoards (): Array
-    {
-        $response = $this->request('boards.json');
-
-        return $response['boards'] ?? NULL;
-    }
-
-    private function request ($path): Array {
+    protected function request ($path): Array {
         $response = $this
             ->httpClient
             ->get($this->getUri($path));
@@ -43,7 +37,7 @@ class Transport
         return $response;
     }
 
-    private function getUri ($path) {
+    protected function getUri ($path) {
         return(
             $this->transportSettings->getProtocol().
             "://" .
