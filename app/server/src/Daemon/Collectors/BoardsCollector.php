@@ -1,21 +1,21 @@
 <?php
-namespace App\Daemon;
-use \App\Daemon\Transport,
-    PHPHtmlParser\Dom;
+namespace App\Daemon\Collectors;
+
+use \App\Daemon\Transport\BoardsTransport;
 
 class BoardsCollector
 {
-    private $transport;
+    private $boardsTransport;
 
-    public function __construct(Transport $transport)
+    public function __construct(BoardsTransport $boardsTransport)
     {
-        $this->transport = $transport;
+        $this->boardsTransport = $boardsTransport;
     }
 
     public function getBoards ()
     {
         $boards = $this
-            ->transport
+            ->boardsTransport
             ->getBoards();
 
         $boards = array_filter($boards, function ($board) {
