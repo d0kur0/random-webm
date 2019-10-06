@@ -1,5 +1,5 @@
 <?php
-namespace App\Daemon;
+namespace App\Daemon\Transport;
 
 class TransportSettings
 {
