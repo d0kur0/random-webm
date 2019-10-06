@@ -14,13 +14,15 @@ class CollectBoards
 
     public function getBoards ()
     {
-        $boards = $this->transport->getBoards();
+        $boards = $this
+            ->transport
+            ->getBoards();
 
-        array_filter($boards, function ($board) {
+        $boards = array_filter($boards, function ($board) {
             return $board['speed'] < 50;
         });
 
-        array_map(function ($board) {
+        $boards = array_map(function ($board) {
             return [
                 'boardName' => $board['id'],
                 'boardDescription' => $board['info'],
