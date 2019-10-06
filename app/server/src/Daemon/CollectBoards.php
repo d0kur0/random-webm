@@ -1,18 +1,32 @@
 <?php
 namespace App\Daemon;
-use \App\Daemon\ApiTransport;
+use \App\Daemon\Transport,
+    PHPHtmlParser\Dom;
 
 class CollectBoards
 {
-    private $apiTransport;
+    private $transport;
 
-    public function __construct(ApiTransport $apiTransport)
+    public function __construct(Transport $transport)
     {
-        $this->apiTransport = $apiTransport;
+        $this->transport = $transport;
     }
 
     public function getBoards ()
     {
+        $boards = $this->transport->getBoards();
 
+        array_filter($boards, function ($board) {
+            return $board['speed'] < 50;
+        });
+
+        array_map(function ($board) {
+            return [
+                'boardName' => $board['id'],
+                'boardDescription' => $board['info'],
+            ];
+        }, $boards);
+
+        return $boards;
     }
 }
