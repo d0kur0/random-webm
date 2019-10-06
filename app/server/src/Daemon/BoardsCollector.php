@@ -3,7 +3,7 @@ namespace App\Daemon;
 use \App\Daemon\Transport,
     PHPHtmlParser\Dom;
 
-class CollectBoards
+class BoardsCollector
 {
     private $transport;
 
