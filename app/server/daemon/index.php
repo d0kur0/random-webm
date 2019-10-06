@@ -14,14 +14,14 @@ try {
     });
 
     $boardsCollection = $di
-        ->get('App\Daemon\CollectBoards')
+        ->get('App\Daemon\BoardsCollector')
         ->getBoards();
 
     if (!$boardsCollection) {
         throw new \Exception('The board collection was empty');
     }
 
-    var_dump($boardsCollection);
+
 
 } catch (\Exception $exception) {
     // TODO: Logging errors
