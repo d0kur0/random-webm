@@ -2,7 +2,7 @@
 namespace App\Daemon;
 use \App\Daemon\Transport;
 
-class VideosFromBoardCollector
+class VideosFromThreadCollector
 {
     private $transport;
 
