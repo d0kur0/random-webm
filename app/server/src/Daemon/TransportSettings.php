@@ -1,7 +1,7 @@
 <?php
 namespace App\Daemon;
 
-class ApiTransportConfigs
+class TransportSettings
 {
     private $domain;
     private $protocol;
