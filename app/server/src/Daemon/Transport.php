@@ -28,13 +28,13 @@ class Transport
             ->getBody()
             ->getContents();
 
-        $boards = json_decode($boards);
+        $boards = json_decode($boards, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new \Exception('Could not parse the JSON list of boards');
         }
 
-        return $boards;
+        return $boards['boards'] ?? NULL;
     }
 
     private function getUri ($path) {
