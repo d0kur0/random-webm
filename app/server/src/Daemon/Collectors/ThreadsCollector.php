@@ -3,14 +3,23 @@ namespace App\Daemon\Collectors;
 use \App\Daemon\Transport\ThreadsTransport;
 
 class ThreadsCollector {
-    private $transport;
+    private $threadsTransport;
 
-    public function __construct (Transport $transport)
+    public function __construct (ThreadsTransport $threadsTransport)
     {
-        $this->transport = $transport;
+        $this->threadsTransport = $threadsTransport;
     }
 
-    public function getThreads () {
+    public function getThreads ($board)
+    {
+        $threads = $this
+            ->threadsTransport
+            ->getThreads($board);
 
+        $threads = array_map(function ($thread) {
+            return $thread['num'];
+        }, $threads);
+
+        return $threads;
     }
 }
