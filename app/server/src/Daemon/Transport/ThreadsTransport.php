@@ -4,9 +4,14 @@ namespace App\Daemon\Transport;
 use App\Daemon\Transport\Transport;
 
 class ThreadsTransport extends Transport{
-    public function getThreadsFormBoard ($board): Array {
-        $response = $this->request("{$board}/catalog_num.json");
+    public function getThreads ($board)
+    {
+        $response = $this->request("{$board}/threads.json");
 
-        return $response['threads'] ?? NULL;
+        if (empty($response['threads'])) {
+            throw new \Exception('The thread list turned out to be empty');
+        }
+
+        return $response['threads'];
     }
 }
