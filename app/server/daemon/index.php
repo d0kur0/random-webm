@@ -1,4 +1,5 @@
 <?php
+set_time_limit(-1);
 require_once("../vendor/autoload.php");
 
 try {
@@ -22,12 +23,24 @@ try {
     }
 
     $threadsCollector = $di->get('App\Daemon\Collectors\ThreadsCollector');
+    $videosCollector = $di->get('App\Daemon\Collectors\VideosFromThreadCollector');
+    $videos = [];
 
     foreach ($boardsCollection as $board) {
+        $threads = $threadsCollector->getThreads($board['name']);
 
+        foreach ($threads as $thread) {
+            $videosFromThread = $videosCollector->getVideos($board['name'], $thread);
+            if (!$videosFromThread) continue;
+
+            $videos[] = $videosFromThread;
+        }
     }
+
+    var_dump($videos);
 
 } catch (\Exception $exception) {
     // TODO: Logging errors
-    echo $exception->getMessage();
+    echo "\r\n", $exception->getMessage(), "\r\n", "File: ",
+        $exception->getFile(), ':', $exception->getLine(), "\r\n", $exception->getTraceAsString(), "\r\n";
 }
