@@ -24,8 +24,8 @@ class BoardsCollector
 
         $boards = array_map(function ($board) {
             return [
-                'boardName' => $board['id'],
-                'boardDescription' => $board['info'],
+                'name'        => $board['id'],
+                'description' => $board['info'],
             ];
         }, $boards);
 
