@@ -8,6 +8,10 @@ class BoardsTransport extends Transport {
     {
         $response = $this->request('boards.json');
 
-        return $response['boards'] ?? NULL;
+        if (empty($response['boards'])) {
+            throw new \Exception('The list of boards was empty');
+        }
+
+        return $response['boards'];
     }
 }
