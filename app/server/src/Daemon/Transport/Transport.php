@@ -15,7 +15,8 @@ abstract class Transport
         $this->transportSettings = $transportSettings;
     }
 
-    protected function request ($path): Array {
+    protected function request ($path)
+    {
         $response = $this
             ->httpClient
             ->get($this->getUri($path));
@@ -37,7 +38,8 @@ abstract class Transport
         return $response;
     }
 
-    protected function getUri ($path) {
+    protected function getUri ($path)
+    {
         return(
             $this->transportSettings->getProtocol().
             "://" .
