@@ -1,5 +1,5 @@
 <?php
-namespace App\Daemon\Collectors;
+namespace App\Daemon\Collectors\_2ch;
 
 use \App\Daemon\Transport\BoardsTransport;
 

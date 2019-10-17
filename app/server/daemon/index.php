@@ -23,7 +23,7 @@ try {
     }
 
     $threadsCollector = $di->get('App\Daemon\Collectors\ThreadsCollector');
-    $videosCollector = $di->get('App\Daemon\Collectors\VideosFromThreadCollector');
+    $videosCollector = $di->get('App\Daemon\Collectors\VideosCollector');
     $videos = [];
 
     foreach ($boardsCollection as $board) {

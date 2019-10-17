@@ -1,8 +1,8 @@
 <?php
-namespace App\Daemon\Collectors;
+namespace App\Daemon\Collectors\_2ch;
 use \App\Daemon\Transport\PostsTransport;
 
-class VideosFromThreadCollector
+class VideosCollector
 {
     private $desiredTypes = ['mp4', 'webm'];
     private $postsTransport;
