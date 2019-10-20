@@ -1,0 +1,11 @@
+{
+  "name": "daemon",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start-daemon": "echo \"daemon-run\""
+  },
+  "author": "",
+  "license": "ISC"
+}
