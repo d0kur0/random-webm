@@ -12,10 +12,7 @@ fi
 
 source .env
 
-
 export DOCKER_USER="$UID:$GID"
-export SERVER_PATH="$PWD/app/server"
-export CLIENT_PATH="$PWD/app/client"
 export NGINX_CONFIGS="./docker/nginx"
 
 if [ ! -d "$NGINX_CONFIGS/working" ]; then
@@ -33,11 +30,6 @@ fi
 
 echo "VUE_APP_SERVER_ADDRESS=$SERVER_NAME_SERVER" >> "$VUE_ENV"
 echo "VUE_APP_CLIENT_ADDRESS=$SERVER_NAME_CLIENT" >> "$VUE_ENV"
-
-docker run --rm --interactive --tty \
-  -u "${UID}:${GID}" \
-  -v "$SERVER_PATH":/app \
-  composer install --ignore-platform-reqs
 
 docker-compose down
 docker-compose build
