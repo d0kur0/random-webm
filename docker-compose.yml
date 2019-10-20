@@ -1,17 +1,14 @@
 version: '3'
 
 services:
-  php:
+  redis:
     restart: always
-    build: docker/php
-    env_file:
-      - .env
-    ports:
-      - 10000
-    volumes:
-      - ./app/server:/var/server
+    image: 'bitnami/redis:latest'
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      DISABLE_COMMANDS: ${REDIS_DISABLE_COMMANDS}
 
-  node:
+  client:
     restart: always
     image: "node:10"
     user: "$DOCKER_USER"
@@ -23,10 +20,25 @@ services:
       SERVER_NAME_SERVER: ${SERVER_NAME_SERVER}
       SERVER_NAME_CLIENT: ${SERVER_NAME_CLIENT}
     ports:
-      - "8089:8089"
+      - "81:81"
     command: >
       bash -c "npm install
       && npm run serve"
+
+  daemon:
+    image: "node:10"
+    user: "$DOCKER_USER"
+    working_dir: /home/node/daemon
+    volumes:
+      - ./app/daemon:/home/node/daemon
+    environment:
+      NODE_ENV: "development"
+      SERVER_NAME_SERVER: ${SERVER_NAME_SERVER}
+      SERVER_NAME_CLIENT: ${SERVER_NAME_CLIENT}
+    command: >
+      bash -c "npm install
+      && npm run start-daemon"
+
   nginx:
     restart: always
     image: nginx:latest
@@ -39,5 +51,4 @@ services:
       - ./volumes/server/logs:/var/log/nginx/server
       - ./volumes/client/logs:/var/log/nginx/client
     links:
-      - php
-      - node
+      - client
