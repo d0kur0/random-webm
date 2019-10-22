@@ -1,12 +1,11 @@
-global._path = (path) => {
+const path = require('path');
+global.rootPath = relativePath => path.join(__dirname, relativePath);
 
-};
-
-const config = require('@root/configs/schema.json');
-const vendorFactory = require('@vendors/factory.js');
+const schema = require(rootPath('configs/schema.json'));
+const vendorFactory = require(rootPath('vendors/factory.js'));
 
 module.exports = () => {
-    const vendorsPull = config.vendors.map(vendor => vendorFactory(vendor));
+    const vendorsPull = schema.vendors.map(vendor => vendorFactory(vendor));
 
     console.log(vendorsPull);
 };
