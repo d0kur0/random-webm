@@ -31,13 +31,20 @@ services:
     working_dir: /home/node/daemon
     volumes:
       - ./app/daemon:/home/node/daemon
+    command: >
+      bash -c "npm install
+      && npm run start-daemon"
+
+  server:
+    image: "node:10"
+    user: "$DOCKER_USER"
+    working_dir: /home/node/daemon
     environment:
-      NODE_ENV: "development"
       SERVER_NAME_SERVER: ${SERVER_NAME_SERVER}
       SERVER_NAME_CLIENT: ${SERVER_NAME_CLIENT}
     command: >
       bash -c "npm install
-      && npm run start-daemon"
+      && npm run start-server"
 
   nginx:
     restart: always
@@ -52,3 +59,4 @@ services:
       - ./volumes/client/logs:/var/log/nginx/client
     links:
       - client
+      - server
